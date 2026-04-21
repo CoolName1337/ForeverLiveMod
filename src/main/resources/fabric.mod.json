@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "forever_live",
+	"version": "${version}",
+	"name": "Forever Live",
+	"description": "Civ-simulation and AI NPCs mod",
+	"authors": ["zhenyafold"],
+	"icon": "assets/forever_live/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["foreverlive.modid.Foreverlive"],
+		"client": ["foreverlive.modid.client.ForeverliveClient"]
+	},
+	"mixins": [
+		"forever_live.mixins.json",
+		{
+			"config": "forever_live.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
