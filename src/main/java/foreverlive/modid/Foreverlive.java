@@ -12,10 +12,10 @@ import foreverlive.modid.npc.components.memory.MemoryTag;
 import foreverlive.modid.politics.settlement.Settlement;
 import foreverlive.modid.politics.services.BuildTaskManager;
 import foreverlive.modid.politics.settlement.SettlementStyle;
+import foreverlive.modid.politics.settlement.plot.ModuleRegistry;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;

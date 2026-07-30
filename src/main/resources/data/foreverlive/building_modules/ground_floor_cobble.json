@@ -1,0 +1,44 @@
+[
+  {
+    "nbt_path": "foreverlive:building/cobble/corner_1x4",
+    "category": "CORNER",
+    "width": 1,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "COBBLESTONE"]
+  },
+  {
+    "nbt_path": "foreverlive:building/cobble/pillar_1x4",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "COBBLESTONE"]
+  },
+  {
+    "nbt_path": "foreverlive:building/cobble/door_3x4",
+    "category": "DOOR",
+    "width": 3,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "COBBLESTONE"]
+  },
+  {
+    "nbt_path": "foreverlive:building/cobble/window_3x4",
+    "category": "WINDOW",
+    "width": 3,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "COBBLESTONE"]
+  },
+  {
+    "nbt_path": "foreverlive:building/cobble/wall_3x4",
+    "category": "WALL",
+    "width": 3,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "COBBLESTONE"]
+  },
+  {
+    "nbt_path": "foreverlive:building/cobble/wall_2x4",
+    "category": "WALL",
+    "width": 2,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "COBBLESTONE"]
+  }
+]

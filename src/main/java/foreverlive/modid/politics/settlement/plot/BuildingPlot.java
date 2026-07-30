@@ -5,7 +5,6 @@ import foreverlive.modid.politics.settlement.PlotTaskManager;
 import foreverlive.modid.politics.settlement.enums.PlotType;
 import foreverlive.modid.politics.settlement.enums.RoleTag;
 import foreverlive.modid.politics.settlement.enums.TaskType;
-import foreverlive.modid.politics.settlement.plot.layout.BuildingLayout;
 import foreverlive.modid.politics.settlement.plot.layout.FloorLayout;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,11 +28,10 @@ public class BuildingPlot {
     private BlockPos anchorPos;
     private Direction facing = Direction.NORTH;
 
-
     private Set<String> tags = new HashSet<>();
     private PlotType type;
 
-    // --- Параметры постройки и Layout ---
+    // --- Параметры постройки и Слои Этажей ---
     private int tier = 1;
     private final List<FloorLayout> floors;
 
@@ -43,11 +41,24 @@ public class BuildingPlot {
     private final Set<UUID> assignedWorkers = new HashSet<>();
     private final Set<UUID> assignedResidents = new HashSet<>();
 
+    // --- Конструкторы ---
+
     public BuildingPlot(UUID settlementId, String name, BlockPos minPos, BlockPos maxPos, PlotType type) {
-        this(UUID.randomUUID(), settlementId, name, minPos, maxPos, type);
+        this(UUID.randomUUID(), settlementId, name, minPos, maxPos, type, new ArrayList<>());
     }
 
-    private BuildingPlot(UUID plotId, UUID settlementId, String name, BlockPos minPos, BlockPos maxPos, PlotType type) {
+    public BuildingPlot(BlockPos minPos, int widthX, int lengthZ, Direction facing, List<FloorLayout> floors) {
+        this(UUID.randomUUID(), null, "Plot_" + UUID.randomUUID().toString().substring(0, 5),
+                minPos, minPos.offset(widthX - 1, calculateTotalHeight(floors) - 1, lengthZ - 1),
+                PlotType.RESIDENTIAL, floors);
+        this.facing = facing;
+    }
+
+    public BuildingPlot(UUID plotId, UUID settlementId, String name, BlockPos minPos, BlockPos maxPos, PlotType type) {
+        this(plotId, settlementId, name, minPos, maxPos, type, new ArrayList<>());
+    }
+
+    public BuildingPlot(UUID plotId, UUID settlementId, String name, BlockPos minPos, BlockPos maxPos, PlotType type, List<FloorLayout> floors) {
         this.plotId = plotId;
         this.settlementId = settlementId;
         this.name = name;
@@ -59,8 +70,11 @@ public class BuildingPlot {
                 (minPos.getZ() + maxPos.getZ()) / 2
         );
         this.type = type;
+        this.floors = new ArrayList<>(floors);
         this.taskManager = new PlotTaskManager(this);
     }
+
+    // --- Геометрия и Коллизии ---
 
     public boolean intersects(BuildingPlot other) {
         int margin = 1;
@@ -73,6 +87,8 @@ public class BuildingPlot {
                 pos.getY() >= minPos.getY() && pos.getY() <= maxPos.getY() &&
                 pos.getZ() >= minPos.getZ() && pos.getZ() <= maxPos.getZ();
     }
+
+    // --- Логика Тиков и Ремонта ---
 
     public void tick(Level level) {
         if (level.getGameTime() % 100 == 0) {
@@ -104,16 +120,53 @@ public class BuildingPlot {
         this.damagedBlocks.remove(pos);
     }
 
+    // --- Управление этажами ---
+
+    public void addFloor(FloorLayout floor) {
+        this.floors.add(floor);
+        recalculateMaxHeight();
+    }
+
+    public void clearFloors() {
+        this.floors.clear();
+    }
+
+    public FloorLayout getFloor(int index) {
+        if (index >= 0 && index < floors.size()) {
+            return floors.get(index);
+        }
+        return null;
+    }
+
+    public int getFloorsCount() {
+        return floors.size();
+    }
+
+    private void recalculateMaxHeight() {
+        int totalHeight = calculateTotalHeight(this.floors);
+        if (totalHeight > 0) {
+            this.maxPos = new BlockPos(this.maxPos.getX(), this.minPos.getY() + totalHeight - 1, this.maxPos.getZ());
+        }
+    }
+
+    private static int calculateTotalHeight(List<FloorLayout> floorList) {
+        int h = 0;
+        for (FloorLayout f : floorList) {
+            h += f.getConfig().height();
+        }
+        return Math.max(1, h);
+    }
+
     // --- Сохранение в NBT ---
 
     public CompoundTag saveToNBT() {
         CompoundTag tag = new CompoundTag();
 
-        saveUUID(tag, "PlotId", plotId);
-        saveUUID(tag, "SettlementId", settlementId);
+        if (plotId != null) saveUUID(tag, "PlotId", plotId);
+        if (settlementId != null) saveUUID(tag, "SettlementId", settlementId);
 
         tag.putString("Name", name);
-        tag.putString("Type", type.name());
+        if (type != null) tag.putString("Type", type.name());
         tag.putString("Facing", facing.getName());
 
         tag.putLong("MinPos", minPos.asLong());
@@ -122,16 +175,21 @@ public class BuildingPlot {
 
         tag.putInt("Tier", tier);
 
-        if (layout != null) {
-            tag.put("Layout", layout.saveToNBT());
+        // Сохранение списка этажей
+        ListTag floorsTag = new ListTag();
+        for (FloorLayout floor : floors) {
+            floorsTag.add(floor.saveToNBT());
         }
+        tag.put("Floors", floorsTag);
 
+        // Теги
         ListTag tagsList = new ListTag();
         for (String tagStr : tags) {
             tagsList.add(StringTag.valueOf(tagStr));
         }
-
         tag.put("Tags", tagsList);
+
+        // Рабочие
         ListTag workersTag = new ListTag();
         for (UUID workerId : assignedWorkers) {
             CompoundTag workerCompound = new CompoundTag();
@@ -140,6 +198,7 @@ public class BuildingPlot {
         }
         tag.put("Workers", workersTag);
 
+        // Жители
         ListTag residentsTag = new ListTag();
         for (UUID residentId : assignedResidents) {
             CompoundTag residentCompound = new CompoundTag();
@@ -148,6 +207,7 @@ public class BuildingPlot {
         }
         tag.put("Residents", residentsTag);
 
+        // Поврежденные блоки
         ListTag damagedTag = new ListTag();
         for (Map.Entry<BlockPos, BlockState> entry : damagedBlocks.entrySet()) {
             CompoundTag entryTag = new CompoundTag();
@@ -163,10 +223,10 @@ public class BuildingPlot {
     // --- Загрузка из NBT ---
 
     public static BuildingPlot loadFromNBT(CompoundTag tag) {
-        UUID plotId = loadUUID(tag, "PlotId");
-        UUID settlementId = loadUUID(tag, "SettlementId");
+        UUID plotId = tag.contains("PlotIdMost") ? loadUUID(tag, "PlotId") : UUID.randomUUID();
+        UUID settlementId = tag.contains("SettlementIdMost") ? loadUUID(tag, "SettlementId") : null;
         String name = tag.getString("Name").get();
-        PlotType type = PlotType.valueOf(tag.getString("Type").get());
+        PlotType type = tag.contains("Type") ? PlotType.valueOf(tag.getString("Type").get()) : PlotType.RESIDENTIAL;
 
         BlockPos min = BlockPos.of(tag.getLong("MinPos").get());
         BlockPos max = BlockPos.of(tag.getLong("MaxPos").get());
@@ -178,8 +238,13 @@ public class BuildingPlot {
 
         if (tag.contains("Tier")) plot.tier = tag.getInt("Tier").get();
 
-        if (tag.contains("Layout")) {
-            plot.layout = BuildingLayout.loadFromNBT(tag.getCompound("Layout").get());
+        // Загрузка списка этажей
+        if (tag.contains("Floors")) {
+            ListTag floorsTag = tag.getList("Floors").get();
+            for (int i = 0; i < floorsTag.size(); i++) {
+                CompoundTag floorCompound = floorsTag.getCompound(i).get();
+                plot.floors.add(FloorLayout.loadFromNBT(floorCompound));
+            }
         }
 
         if (tag.contains("Tags")) {
@@ -265,6 +330,7 @@ public class BuildingPlot {
 
     public int getTier() { return tier; }
     public void setTier(int tier) { this.tier = tier; }
+
     public List<FloorLayout> getFloors() { return floors; }
 
     // --- Хелперы размеров участка ---
