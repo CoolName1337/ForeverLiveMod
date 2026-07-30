@@ -1,0 +1,63 @@
+[
+  {
+    "nbt_path": "foreverlive:building/panels/wall1",
+    "category": "WALL",
+    "width": 1,
+    "height": 4,
+    "tags": [
+      "COBBLESTONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/panels/wall2",
+    "category": "WALL",
+    "width": 2,
+    "height": 5,
+    "tags": [
+      "WOOD",
+      "NATURE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/panels/wall3",
+    "category": "WALL",
+    "width": 1,
+    "height": 4,
+    "tags": [
+      "WOOD",
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/panels/wall4",
+    "category": "WALL",
+    "width": 2,
+    "height": 4,
+    "tags": [
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/panels/wall5",
+    "category": "WALL",
+    "width": 1,
+    "height": 4,
+    "tags": [
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/panels/wall6",
+    "category": "WALL",
+    "width": 3,
+    "height": 6,
+    "tags": [
+      "WOOD"
+    ]
+  }
+]

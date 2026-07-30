@@ -4,35 +4,36 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import foreverlive.modid.S2C.BulkNpcStatePayload;
 import foreverlive.modid.S2C.NpcSyncManager;
+import foreverlive.modid.commands.BuildTestCommand;
 import foreverlive.modid.npc.SyncCategory;
 import foreverlive.modid.config.ModConfig;
 import foreverlive.modid.entities.NpcEntity;
 import foreverlive.modid.npc.components.memory.MemoryTag;
-import foreverlive.modid.politics.POJO.Settlement;
-import foreverlive.modid.politics.builder.SettlementPlanner;
-import foreverlive.modid.politics.builder.SettlementStyle;
-import foreverlive.modid.politics.builder.WorldBuildQueue;
+import foreverlive.modid.politics.settlement.Settlement;
+import foreverlive.modid.politics.services.BuildTaskManager;
+import foreverlive.modid.politics.settlement.SettlementStyle;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import org.apache.commons.compress.archivers.dump.DumpArchiveEntry;
+import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.Permissions;
 import java.util.concurrent.CompletableFuture;
 
 public class Foreverlive implements ModInitializer {
@@ -60,8 +61,7 @@ public class Foreverlive implements ModInitializer {
 		ServerLevel world = player.level();
 		BlockPos playerPos = player.blockPosition();
 
-		Settlement settlement = new Settlement();
-		settlement.origin = playerPos;
+		Settlement settlement = new Settlement(playerPos);
 
 		SettlementStyle style = switch (lit) {
 			case "village" -> SettlementStyle.createVillage();
@@ -74,7 +74,7 @@ public class Foreverlive implements ModInitializer {
 		// ЗАПУСКАЕМ ТЯЖЕЛЫЙ РАСЧЕТ В ФОНОВОМ ПОТОКЕ, чтобы не фризить сервер!
 		CompletableFuture.runAsync(() -> {
 			LOGGER.info("Расчет города {} запущен асинхронно...", lit);
-			SettlementPlanner.planAndBuild(world, settlement, style);
+			BuildTaskManager.startBuild(world, settlement, style);
 		});
 	}
 
@@ -88,6 +88,12 @@ public class Foreverlive implements ModInitializer {
 
 		FabricDefaultAttributeRegistry.register(ModEntities.NPC, NpcEntity.createAttributes());
 		PayloadTypeRegistry.clientboundPlay().register(BulkNpcStatePayload.ID, BulkNpcStatePayload.CODEC);
+
+		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> {
+			BuildTestCommand.register(dispatcher);
+		});
+
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ModuleRegistry());
 
 		// ИСПРАВЛЕНО: Регистрируем ивент ЕДИНОЖДЫ, а внутренний цикл строит ветки
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> {
@@ -108,11 +114,10 @@ public class Foreverlive implements ModInitializer {
 			dispatcher.register(generateCmd);
 		});
 
-		ServerTickEvents.START_SERVER_TICK.register(world -> {
-			ServerLevel overworld = world.overworld();
-			if (overworld != null) {
-				WorldBuildQueue.tick(overworld);
-			}
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			ServerLevel world = server.overworld();
+			if (world != null)
+				BuildTaskManager.onServerTick(world);
 		});
 
 		ServerTickEvents.END_SERVER_TICK.register(world -> {

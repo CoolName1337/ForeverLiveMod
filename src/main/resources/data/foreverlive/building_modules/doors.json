@@ -1,0 +1,11 @@
+[
+  {
+    "nbt_path": "foreverlive:building/doors/door6",
+    "category": "DOOR",
+    "width": 3,
+    "height": 6,
+    "tags": [
+      "WOOD"
+    ]
+  }
+]

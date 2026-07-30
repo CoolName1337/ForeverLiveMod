@@ -1,5 +1,6 @@
 package foreverlive.modid.politics.POJO;
 
+import foreverlive.modid.politics.settlement.Settlement;
 import net.minecraft.server.level.ServerLevel;
 
 import java.util.*;
