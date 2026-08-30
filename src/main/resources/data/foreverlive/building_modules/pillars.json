@@ -1,0 +1,61 @@
+[
+  {
+    "nbt_path": "foreverlive:building/pillars/pillar1",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 4,
+    "tags": [
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/pillars/pillar2",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 5,
+    "tags": [
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/pillars/pillar3",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 5,
+    "tags": [
+      "WOOD",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/pillars/pillar4",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 4,
+    "tags": [
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/pillars/pillar5",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 4,
+    "tags": [
+      "STONE",
+      "BASIC"
+    ]
+  },
+  {
+    "nbt_path": "foreverlive:building/pillars/pillar6",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 6,
+    "tags": [
+      "WOOD"
+    ]
+  }
+]

@@ -24,22 +24,20 @@ import java.nio.file.Path;
 
 public class Foreverlive implements ModInitializer {
 	public static final String MOD_ID = "forever_live";
-	public static foreverlive.modid.config.ModConfig CONFIG;
+	public static ModConfig CONFIG;
 	private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("fl_ai.json");
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public void loadConfig() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		try{
+		try {
 			if (Files.exists(CONFIG_PATH)) {
 				CONFIG = gson.fromJson(Files.newBufferedReader(CONFIG_PATH), ModConfig.class);
 			} else {
 				CONFIG = ModConfig.createDefault();
 				Files.write(CONFIG_PATH, gson.toJson(CONFIG).getBytes());
 			}
-		}
-		catch (IOException ex){
+		} catch (IOException ex) {
 			CONFIG = ModConfig.createDefault();
 			ex.printStackTrace();
 		}
@@ -48,23 +46,20 @@ public class Foreverlive implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Let's get it");
-
 		loadConfig();
 
-		// Invoke static
 		ModEntities.NPC.toString();
 		MemoryTag.ENTITY.toString();
 
 		FabricDefaultAttributeRegistry.register(ModEntities.NPC, NpcEntity.createAttributes());
-
 		PayloadTypeRegistry.clientboundPlay().register(BulkNpcStatePayload.ID, BulkNpcStatePayload.CODEC);
 
 		ServerTickEvents.END_SERVER_TICK.register(world -> {
-
-			if(world.getTickCount() % 5 == 0){
+			if (world.getTickCount() % 5 == 0) {
 				NpcSyncManager.flush(world);
 			}
 		});
+
 		EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
 			if (entity instanceof NpcEntity npc) {
 				npc.syncTracker.markDirty(SyncCategory.NEEDS);

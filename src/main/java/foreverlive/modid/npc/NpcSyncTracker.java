@@ -34,7 +34,6 @@ public class NpcSyncTracker {
         }
     }
 
-
     public void tickSync() {
         if (dirtyCategories.isEmpty()) return;
 
@@ -82,6 +81,7 @@ public class NpcSyncTracker {
             );
         }
     }
+
     public void updateClientState(NpcStateData data) {
         data.needs().ifPresent(remoteNeeds -> {
             remoteNeeds.forEach(this.npc::setNeedValue);

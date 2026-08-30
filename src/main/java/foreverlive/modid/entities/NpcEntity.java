@@ -60,9 +60,6 @@ public class NpcEntity extends PathfinderMob {
     private static final EntityDataAccessor<Integer> SKIN_INDEX =
             SynchedEntityData.defineId(NpcEntity.class, EntityDataSerializers.INT);
 
-    public void setTargetPos(BlockPos pos) { this.targetPos = pos; }
-    public BlockPos getTargetPos() { return this.targetPos; }
-
     public SimpleContainer getInventory(){
         return inventory;
     }
@@ -232,7 +229,7 @@ public class NpcEntity extends PathfinderMob {
         pickUpItems();
     }
     public void pickUpItems() {
-        // Ищем предметы в радиусе 1.5 блоков (чтобы не тялесосило через стены)
+        // Ищем предметы в радиусе 1.5 блоков (чтобы не пылесосило через стены)
         List<ItemEntity> items = level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(1.5, 1.0, 1.5));
 
         for (ItemEntity itemEntity : items) {
@@ -268,7 +265,7 @@ public class NpcEntity extends PathfinderMob {
             this.sensors.senseEntities();
 
             this.brain.reThink();
-            // Можно добавить звук возмущения Григория
+            // Можно добавить звук возмущения
             // this.playSound(SoundEvents.VILLAGER_HURT, 1.0f, 1.0f);
         }
     }

@@ -1,0 +1,44 @@
+[
+  {
+    "nbt_path": "foreverlive:building/corners/corner1",
+    "category": "CORNER",
+    "width": 1,
+    "height": 4,
+    "tags": ["STONE", "BASIC"]
+  },
+  {
+    "nbt_path": "foreverlive:building/corners/corner1",
+    "category": "CORNER",
+    "width": 1,
+    "height": 5,
+    "tags": ["STONE", "BASIC"]
+  },
+  {
+    "nbt_path": "foreverlive:building/corners/corner3",
+    "category": "CORNER",
+    "width": 1,
+    "height": 5,
+    "tags": ["WOOD", "BASIC"]
+  },
+  {
+    "nbt_path": "foreverlive:building/corners/corner4",
+    "category": "CORNER",
+    "width": 1,
+    "height": 4,
+    "tags": ["STONE", "BASIC"]
+  },
+  {
+    "nbt_path": "foreverlive:building/corners/corner5",
+    "category": "CORNER",
+    "width": 1,
+    "height": 4,
+    "tags": ["STONE", "BASIC"]
+  },
+  {
+    "nbt_path": "foreverlive:building/corners/corner6",
+    "category": "CORNER",
+    "width": 1,
+    "height": 6,
+    "tags": ["WOOD"]
+  }
+]

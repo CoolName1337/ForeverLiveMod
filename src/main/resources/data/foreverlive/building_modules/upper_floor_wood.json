@@ -1,0 +1,37 @@
+[
+  {
+    "nbt_path": "foreverlive:building/wood/corner_1x4",
+    "category": "CORNER",
+    "width": 1,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "OAK_WOOD"]
+  },
+  {
+    "nbt_path": "foreverlive:building/wood/pillar_1x4",
+    "category": "PILLAR",
+    "width": 1,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "OAK_WOOD"]
+  },
+  {
+    "nbt_path": "foreverlive:building/wood/window_3x4",
+    "category": "WINDOW",
+    "width": 3,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "OAK_WOOD"]
+  },
+  {
+    "nbt_path": "foreverlive:building/wood/wall_3x4",
+    "category": "WALL",
+    "width": 3,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "OAK_WOOD"]
+  },
+  {
+    "nbt_path": "foreverlive:building/wood/wall_2x4",
+    "category": "WALL",
+    "width": 2,
+    "height": 4,
+    "tags": ["RESIDENTIAL", "OAK_WOOD"]
+  }
+]
