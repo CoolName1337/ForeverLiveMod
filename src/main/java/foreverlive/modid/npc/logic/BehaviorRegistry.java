@@ -279,7 +279,7 @@ public class BehaviorRegistry {
             }
         });
         BEHAVIORS.put(NeedType.IDLE, new Behavior() {
-            private enum SubState { WANDER, LOOK_AROUND, VISIT_INTEREST, WATCH_SKY }
+            enum SubState { WANDER, LOOK_AROUND, VISIT_INTEREST, WATCH_SKY }
 
             private SubState state;
             private int stateTimer;
